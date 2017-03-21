@@ -1,0 +1,21 @@
+[{
+        "id": 0,
+        "icon": "ion-university",
+        "name": "Academics"
+    },{
+        "id": 1,
+        "icon": "ion-camera",
+        "name": "Photography"
+    },{
+        "id": 2,
+        "icon": "ion-music-note",
+        "name": "Music"
+    },{
+        "id": 3,
+        "icon": "ion-woman",
+        "name": "Fashion"
+    },{
+        "id": 4,
+        "icon": "ion-plane",
+        "name": "Travel"
+    }]

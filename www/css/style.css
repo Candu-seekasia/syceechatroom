@@ -1,0 +1,335 @@
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: white;
+}
+strong{
+    color: black;
+}
+
+.pane,
+.view,
+.modal {
+    background:white;
+    background: linear-gradient(to right, #1e5799 0%, #2ce0bf 19%, #76dd2c 40%, #dba62b 60%, #e02cbf 83%, #1e5799 100%);
+    background-size: 10000px 100%;
+    animation: bgColorSwitcher 45s linear infinite;
+}
+
+.bar.bar-positive,
+.bar.bar-stable {
+    border-color: rgba(241, 196, 15,1.0);;
+    background-color: rgba(241, 196, 15,1.0);;
+    background-image: linear-gradient(0deg, rgba(241, 196, 15,1.0), rgba(241, 196, 15,0.8), transparent 50%);
+    color: #fff;
+}
+
+.bar.bar-stable .title,
+.bar-stable .button.button-clear {
+    color: white;
+}
+
+.card, .list-inset {
+    margin: 20px 0 0 0;
+}
+
+@keyframes bgColorSwitcher {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 10000px; }
+}
+
+.logo {
+    display: block;
+    position: relative;
+    width: 100%;
+    margin: 20px auto 0 auto;
+}
+
+.item {
+    background: transparent;
+    border-color: transparent;
+    color: white;
+}
+.blkBck{
+    color: yellow;
+}
+.scroll-content{
+    background-color: #272724;
+}
+.item-input {
+    margin-top: 10px;
+    padding: 0;
+}
+
+.item-input input {
+    background: white;
+
+}
+
+.card .item.item-input input, .list-inset .item.item-input input, .padding > .list .item.item-input input, .padding-horizontal > .list .item.item-input input,
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
+
+
+}
+
+textarea{
+    padding: 0px 0px;
+    width: 100%;
+
+}
+
+.item-note {
+    font-size: 10px;
+    margin-top: -22px;
+    margin-right: -35px;
+}
+
+.button {
+    font-size: 20px;
+}
+
+.button.button-positive.active,
+.button.button-positive.activated {
+    background: rgba(241, 196, 15,1.0);
+    border-color: transparent;
+}
+
+.button.button-positive {
+    background: rgba(241, 196, 15,1.0);
+    font-weight: 600;
+    height: 60px;
+}
+
+.button.button-positive.button-outline {
+    border-color: #ffffff;
+    background: transparent;
+    color: #ffffff;
+    width: calc(100% - 20px);
+}
+
+.button-small .icon:before, .button-small.icon:before, .button-small.icon-left:before, .button-small.icon-right:before {
+    font-size: 20px;
+    line-height: 19px;
+    margin-top: 3px;
+}
+
+.button.icon-left:before {
+    float: left;
+    margin-right: -15px;
+    padding-left: 15px;
+}
+
+
+.textCenter {
+    text-align: center;
+}
+
+.card, .list-inset {
+    background: transparent;
+    box-shadow: none;
+}
+.item .item-content {
+  padding: 1px !important;
+}
+
+.bar-footer {
+  overflow: visible !important;
+}
+
+.bar-footer textarea {
+  resize: none;
+  height: 25px;
+  width: 100%;
+}
+
+/* fixes an ios bug bear */
+button.ion-android-send {
+  padding-top: 2px;
+}
+
+/* add this to keep your footer buttons down
+at the bottom as the textarea resizes */
+.footer-btn-wrap {
+  position: relative;
+  height: 100%;
+  width: 50px;
+  top: 7px;
+}
+
+button.photo {
+  position: absolute;
+  bottom: 0px;
+  left: -43px;
+}
+
+.scrollDownBtn{
+  right: -10px;
+  bottom: 60px;
+}
+
+.scrollDownBtn:before{
+  background-color: white;
+  border-radius: 100%;
+}
+
+.footer-btn {
+  position: absolute !important;
+  bottom: 0;
+}
+
+img.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+}
+
+img.profile-pic.left {
+  left: 10px;
+}
+
+img.profile-pic.right {
+  right: 10px;
+}
+
+.ion-email {
+  float: right;
+  font-size: 32px;
+  vertical-align: middle;
+}
+
+.message {
+  font-size: 14px;
+  word-wrap: break-word;
+  word-break: normal;
+  text-overflow: clip;
+  white-space: normal;
+
+}
+
+.message-detail {
+  white-space: nowrap;
+  font-size: 14px;
+
+}
+
+.bar.item-input-inset .item-input-wrapper input {
+  width: 100% !important;
+}
+
+.message-wrapper {
+  position: relative;
+}
+
+.message-wrapper:last-child {
+  margin-bottom: 10px;
+}
+
+.chat-bubble {
+  border-radius: 5px;
+  display: inline-block;
+  padding: 10px 18px;
+  position: relative;
+  margin: 10px;
+  max-width: 80%;
+}
+
+.chat-bubble:before {
+  content: "\00a0";
+  display: block;
+  height: 16px;
+  width: 9px;
+  position: absolute;
+  bottom: -7.5px;
+}
+
+.chat-bubble img{
+  max-width:100%;
+  max-height:300px;
+}
+
+.chat-bubble.left {
+  background-color: gray;
+  float: left;
+  margin-left: 55px;
+}
+
+.chat-bubble.left:before {
+  background-color: gray;
+  left: 10px;
+  -webkit-transform: rotate(70deg) skew(5deg);
+  transform: rotate(70deg) skew(5deg);
+}
+
+.chat-bubble.right {
+  background-color: blueviolet;
+  color: #fff;
+  float: right;
+  margin-right: 55px;
+}
+
+.chat-bubble.right:before {
+  background-color: blueviolet;
+  right: 10px;
+  -webkit-transform: rotate(118deg) skew(-5deg);
+  transform: rotate(118deg) skew(-5deg);
+}
+
+.chat-bubble.right a.autolinker {
+  color: #fff;
+  font-weight: bold;
+}
+
+input, textarea, .item-input, .item-input-wrapper {
+  background-color: #f4f4f4 !important;
+  padding: 6px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.cf {
+  clear: both !important;
+}
+
+a.autolinker {
+  color: #3b88c3;
+  text-decoration: none;
+}
+
+label.myLabel input[type="file"] {
+  position: fixed;
+  top: -1000px;
+}
+
+/***** Example custom styling *****/
+.myLabel {
+  border: 2px solid #11c1f3;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin: 2px;
+  background: #11c1f3;
+  display: inline-block;
+  line-height:32px;
+  margin-left: 6px;
+  height: 32px;
+}
+.myLabel:hover {
+  background: #11c1f3;
+}
+.myLabel:active {
+  background: #11c1f3;
+}
+.myLabel :invalid + span {
+  color: white;
+}
+.myLabel :valid + span {
+  color: white;
+}
+.item-input-wrapper ~ .button {
+  margin-left: 8px;
+}

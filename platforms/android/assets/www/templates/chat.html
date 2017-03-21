@@ -1,0 +1,83 @@
+<ion-view>
+  <ion-nav-title>Room {{roomSelected}}</ion-nav-title>
+    <ion-content style="background-color: white">
+        <ion-list>
+            <ion-item ng-hide="chatsGetRoom" class="textCenter">
+                <i class="icon ion-loading-c"></i> Loading Chats
+            </ion-item>
+
+            <ion-item ng-if="chatsGetRoom.length == 0" class="textCenter">
+                <h4>No messages in this room. Send message to start.</h4>
+            </ion-item>
+
+            <ion-item class="" ng-repeat="chat in chatsGetRoom | orderBy:'createdAt':true" type="item-text-wrap" >
+
+
+              <div ng-if="chat.from!==userName">
+
+                <img  class="profile-pic left" ng-src="{{chat.myProfileImage}}"  />
+
+                <div class="chat-bubble left">
+                  <img  ng-if="chat.photo" ng-src="{{chat.photo}}"
+                  />
+                  <div ng-if="!chat.photo" class="message" ng-bind-html="chat.message | nl2br" autolinker>
+                  </div>
+
+                  <div class="message-detail" style="text-align: left">
+                    <span  class="bold">{{chat.from}}</span>,
+                    <span am-time-ago="chat.createdAt"></span>
+                  </div>
+
+                </div>
+              </div>
+
+              <div ng-if="chat.from===userName">
+
+                <img  class="profile-pic right" ng-src="{{chat.myProfileImage}}" />
+
+                <div class="chat-bubble right">
+                  <img  ng-if="chat.photo" ng-src="{{chat.photo}}"/>
+                  <div ng-if="!chat.photo" class="message" ng-bind-html="chat.message | nl2br"  >
+                  </div>
+
+                  <div class="message-detail" style="text-align: right">
+                    <span  class="bold">{{chat.from}}</span>,
+                     <span am-time-ago="chat.createdAt"></span>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+            </ion-item>
+        </ion-list>
+
+        <ion-list ng-hide="roomSelected">
+            <ion-item class="textCenter">
+                <h4>Please select a room to chat first.</h4>
+            </ion-item>
+        </ion-list>
+
+
+    </ion-content>
+  <ion-footer-bar align-title="left" class="bar-dark" style="padding-bottom: 10px;">
+    <ion-item class="item item-input-inset" style="width: 100%">
+      <label class="item-input-wrapper">
+        <input type="text" ng-model="IM.textMessage" placeholder="Type in your message...">
+        <!--<textarea rows="1" ng-model="IM.textMessage" placeholder="Type in your message..."></textarea>-->
+      </label>
+
+      <button ng-click="sendMessage(IM.textMessage, displayName)" class="button button-small button-calm ion-images" style="display: none"></button>
+      <label class="myLabel">
+        <input type="file" onchange="angular.element(this).scope().sendImage(this)"  />
+        <span class="ion-images"></span>
+      </label>
+      <button ng-click="sendMessage(IM.textMessage, displayName)" class="button button-small button-calm ">
+        Send
+      </button>
+
+    </ion-item>
+  </ion-footer-bar>
+</ion-view>
