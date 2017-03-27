@@ -5,8 +5,10 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('LoginCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicLoading', '$state','Users', function($scope, $rootScope, $ionicModal, $ionicLoading, $state,Users) {
-
+.controller('LoginCtrl', ['$scope', '$rootScope', '$ionicModal', '$ionicLoading', '$state','Users','$window', function($scope, $rootScope, $ionicModal, $ionicLoading, $state,Users,$window) {
+    $rootScope.userName="";
+    $rootScope.tabName="Room";
+    $rootScope.uid;
     $ionicModal.fromTemplateUrl('templates/signup.html', {
         scope: $scope
     }).then(function(modal) {
@@ -18,8 +20,6 @@ angular.module('starter.controllers', [])
             $ionicLoading.show({
                 template: 'Signing Up...'
             });
-
-
             auth.createUserWithEmailAndPassword(user.email, user.password).then(function(userData) {
                 alert("User created successfully!");
                 rootRef.child("users").child(userData.uid).set({
@@ -42,7 +42,6 @@ angular.module('starter.controllers', [])
   }
 
     $scope.signIn = function(user) {
-        $rootScope.userName="";
         if (user && user.email && user.pwdForLogin) {
             $ionicLoading.show({
                 template: 'Signing In...'
@@ -52,6 +51,9 @@ angular.module('starter.controllers', [])
                     // To Update AngularJS $scope either use $apply or $timeout
                     displayNames = snapshot.val().displayName;
                     $rootScope.userName=displayNames;
+                    $window.localStorage['userName'] = displayNames;
+                    $window.localStorage['uid'] = authData.uid;
+                    $rootScope.uid = authData.uid;
                     Users.getAllUsers();
                 });
                 $ionicLoading.hide();
@@ -71,9 +73,13 @@ angular.module('starter.controllers', [])
     $scope.IM = {
         textMessage: ""
     };
+    if($rootScope.userName.length>0)
+    {
+        displayNames=$rootScope.userName;
+    }
     if (displayNames === "noname") {
       auth.signOut().then(function(data) {
-        //$state.go('login');
+        $state.go('login');
         // Sign-out successful.
       }, function(error) {
         // An error
@@ -94,13 +100,13 @@ angular.module('starter.controllers', [])
                 // An error
             });
         } else {
-            Chats.send(displayNames, msg);
+            Chats.send(displayNames, msg,'room');
             $scope.IM.textMessage = "";
         }
 
     }
     $scope.sendImage=function(element) {
-          Users.uploadAndSend(element,true);
+          Users.uploadAndSend(element,true,'room');
     }
 
     $scope.remove = function(chat) {
@@ -108,12 +114,20 @@ angular.module('starter.controllers', [])
     }
 }])
 
-.controller('RoomsCtrl', ['$scope', '$rootScope', '$state', 'Rooms', 'Chats', function($scope, $rootScope, $state, Rooms, Chats) {
+.controller('RoomsCtrl', ['$scope', '$rootScope', '$state', 'Rooms', 'Chats','Users','$window', function($scope, $rootScope, $state, Rooms, Chats,Users,$window) {
+    $rootScope.userName=$window.localStorage['userName'];
 
+    $rootScope.tabIndex=1;
     $rootScope.datakuboss = [];
     $scope.get_promise_rooms = Rooms.all();
     $scope.get_promise_rooms.then(successGet);
-
+    $rootScope.allUsers=[];
+    $scope.get_promise_users = Users.all();
+    $scope.get_promise_users.then(successUserGet);
+    if($rootScope.uid)
+    {
+      $rootScope.uid = $window.localStorage['uid'];
+    }
     function successGet(data) {
         for (var i = 0; i < data.val().length; i++) {
             $scope.$apply(function() {
@@ -125,6 +139,24 @@ angular.module('starter.controllers', [])
             });
 
         }
+        Users.getAllUsers();
+
+    }
+    function successUserGet(data) {
+
+      for (var userkey in data.val()) {
+        console.log(userkey);
+        $scope.$apply(function() {
+          $rootScope.allUsers.push({
+            id: userkey,
+            user:data.val()[userkey]
+
+          });
+        });
+        console.log(data.val());
+      }
+
+
     }
 
     $scope.openChatRoom = function(roomId) {
@@ -132,6 +164,27 @@ angular.module('starter.controllers', [])
             roomId: roomId
         });
     }
+    $scope.openUserChatRoom = function (senderKey ,recipientKey) {
+        $state.go('app.user_chat', {
+          senderKey: senderKey,
+          recipientKey:recipientKey
+        });
+    }
+    $scope.switchTad=function(indexTab)
+   {
+       $rootScope.tabIndex=indexTab;
+       switch (indexTab){
+         case 1:
+           $rootScope.tabName="Room";
+           break;
+         case 2:
+           $rootScope.tabName="User";
+           break;
+         case 3:
+           $rootScope.tabName="Setting";
+           break;
+       }
+   }
 }])
 
 .controller('SignoutCtrl', function($scope, $ionicLoading, $state, $ionicPlatform, $ionicPopup) {
@@ -150,4 +203,51 @@ angular.module('starter.controllers', [])
             } else {}
         });
     }
-});
+})
+  .controller('UserChatCtrl', ['$rootScope', '$scope','Users', 'Chats', '$state', function($rootScope, $scope,Users, Chats, $state) {
+
+    $scope.IM = {
+      textMessage: ""
+    };
+    if($rootScope.userName)
+    {
+      displayNames=$rootScope.userName;
+    }
+    if (displayNames === "noname") {
+      auth.signOut().then(function(data) {
+        $state.go('login');
+        // Sign-out successful.
+      }, function(error) {
+        // An error
+      });
+    }
+    //Users.getAllUsers();
+    console.log($state.params);
+    Chats.selectUserRoom($state.params.senderKey,$state.params.recipientKey);
+
+    var roomName = "";
+
+    // Fetching Chat Records only if a Room is Selected
+    $scope.sendMessage = function(msg) {
+      if (displayNames === "noname") {
+        auth.signOut().then(function(data) {
+          $state.go('login');
+          // Sign-out successful.
+        }, function(error) {
+          // An error
+        });
+      } else {
+        Chats.send(displayNames, msg,'user');
+        $scope.IM.textMessage = "";
+      }
+
+    }
+    $scope.sendImage=function(element) {
+      Users.uploadAndSend(element,true,'user');
+    }
+
+    $scope.remove = function(chat) {
+      Chats.remove(chat);
+    }
+  }])
+;

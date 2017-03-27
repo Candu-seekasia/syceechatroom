@@ -1,15 +1,43 @@
 <ion-view view-title="Rooms">
+  <ion-nav-title> {{tabName}}</ion-nav-title>
     <ion-content>
-        <ion-list ng-show="datakuboss">
-            <ion-item class="item-icon-left" ng-repeat="room in datakuboss" type="item-text-wrap" ng-click="openChatRoom(room.id)">
-                <i class="icon {{room.icon}}"></i>
-                <h2>{{room.name}}</h2>
-            </ion-item>
+      <ion-list ng-show="tabIndex===1">
+          <ion-item class="item-icon-left" ng-repeat="room in datakuboss" type="item-text-wrap" ng-click="openChatRoom(room.id)">
+            <i class="icon {{room.icon}}"></i>
+            <h2>{{room.name}}</h2>
+          </ion-item>
         </ion-list>
+
+        <ion-list ng-show="tabIndex===2">
+          <ion-item class="item-icon-left" ng-repeat="user in allUsers" type="item-text-wrap"  ng-if="user.user.displayName!=userName" ng-click="openUserChatRoom(uid,user.id)">
+            <img  class="profile-pic left" ng-src="{{user.user.myProfileImage}}" />
+            <h2>{{user.user.displayName}}</h2>
+
+          </ion-item>
+        </ion-list>
+
         <ion-list ng-hide="datakuboss.length">
-            <ion-item class="textCenter">
-                <i class="icon ion-loading-c"></i> Loading Rooms
-            </ion-item>
+          <ion-item class="textCenter">
+            <i class="icon ion-loading-c"></i> Loading Rooms
+          </ion-item>
         </ion-list>
     </ion-content>
+  <ion-tabs class=" tabs-color-active-positive">
+
+    <!-- message Tab -->
+    <ion-tab title="message" icon-off="ion-ios-chatbubble-outline" icon-on="ion-ios-chatbubble"  on-select="switchTad(1)"   >
+
+    </ion-tab>
+
+    <!-- Dashboard Tab -->
+    <ion-tab title="user" icon-off="ion-ios-contact-outline" icon-on="ion-ios-contact" on-select="switchTad(2)">
+    </ion-tab>
+
+
+    <!-- Account Tab -->
+    <ion-tab title="setting" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" on-select="switchTad(3)">
+    </ion-tab>
+
+
+  </ion-tabs>
 </ion-view>

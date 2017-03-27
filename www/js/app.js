@@ -18,7 +18,7 @@ var rootRef = firebase.database().ref();
 var storageRef=firebase.storage().ref();
 var displayNames = 'noname';
 var profileImageUrl="";
-
+var profileDefaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/testdb-45e50.appspot.com/o/ionic.png?alt=media";
 
 function onDeviceReady() {
     angular.bootstrap(document, ["starter"]);
@@ -68,7 +68,11 @@ angular.module('starter', ['ionic', 'angularMoment', 'starter.controllers', 'sta
     });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
+
+    $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.navBar.alignTitle('center');
+
     $stateProvider
 
     // State to represent Login View
@@ -127,16 +131,35 @@ angular.module('starter', ['ionic', 'angularMoment', 'starter.controllers', 'sta
             }
         }
     })
-
-    .state('app.chat', {
-        url: '/chat/:roomId',
+      .state('app.users', {
+        url: '/users',
         views: {
-            'menuContent': {
-                templateUrl: 'templates/chat.html',
-                controller: 'ChatCtrl'
-            }
+          'menuContent': {
+            templateUrl: 'templates/users.html',
+            controller: 'UsersCtrl'
+          }
         }
-    });
+      })
+    .state('app.chat', {
+    url: '/chat/:roomId',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/chat.html',
+        controller: 'ChatCtrl'
+      }
+    }
+  }) .state('app.user_chat', {
+      url: '/user_chat/:senderKey/:recipientKey',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/user_chat.html',
+          controller: 'UserChatCtrl'
+        }
+      }
+    })
+
+    ;
+
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/login');
 });

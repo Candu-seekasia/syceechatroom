@@ -9,10 +9,12 @@ angular.module('starter.services', [])
 .factory('Chats', ['$rootScope', 'Rooms', '$ionicPopup', function($rootScope, Rooms, $ionicPopup) {
 
     var selectedRoomId;
-
+    var selectUserRoomKeyId;
     var ref = mainApp;
     var chats;
+    var userChats;
     $rootScope.chatsGetRoom = [];
+    $rootScope.userChatsMessage=[];
     $rootScope.userPorfiles={};
     // use for multiple apply
     $rootScope.safeApply = function(fn) {
@@ -64,8 +66,6 @@ angular.module('starter.services', [])
             $rootScope.roomSelected = '';
             if (selectedRoomId && selectedRoomId != null) {
                 selectedRoom = Rooms.get(selectedRoomId);
-
-
                 if (selectedRoom)
                     selectedRoom.then(function(data) {
                         $rootScope.safeApply(function() {
@@ -106,29 +106,99 @@ angular.module('starter.services', [])
                 });
             }
         },
+        selectUserRoom:function (senderKey ,recipientKey) {
 
-        send: function(from, message) {
+          selectUserRoomKeyId = senderKey+"_"+recipientKey;
+          var diffSenderAndRecipient = recipientKey+"_"+senderKey;
+          console.log(selectUserRoomKeyId);
+          if (senderKey!=''&&recipientKey!='') {
+
+            rootRef.child('one-one').once('value', function(snap) {
+              if (!snap.child(selectUserRoomKeyId).exists()) {
+                  selectUserRoomKeyId=diffSenderAndRecipient;
+              }
+              userChats = rootRef.child('one-one').child(selectUserRoomKeyId).child('chats');
+              rootRef.child('one-one').child(selectUserRoomKeyId).child('chats').on('value',function (data) {
+                if (data.val() === null) {
+                  $rootScope.safeApply(function() {
+                    $rootScope.userChatsMessage = [];
+                  });
+                } else {
+                  $rootScope.userChatsMessage = [];
+                  data.forEach(function(dataChild) {
+                    //Rooms.getUserProfile(dataChild.val().from);
+                    console.log("come from:"+$rootScope.userPorfiles[dataChild.val().from]);
+                    $rootScope.safeApply(function() {
+                      $rootScope.userChatsMessage.push({
+                        genKey: dataChild.val().genKey,
+                        from: dataChild.val().from,
+                        message: dataChild.val().message,
+                        createdAt: dataChild.val().createdAt,
+                        myProfileImage:$rootScope.userPorfiles[dataChild.val().from],
+                        photo:dataChild.val().photo
+                      })
+                    })
+                  });
+                }
+              })
+            });
+
+
+          }
+        },
+
+        send: function(from, message,type) {
             if (from && message) {
+                if(type==='room')
+                {
+                  console.log(chats);
+                    var genKey = chats.push().key;
+                    rootRef.child('rooms').child(selectedRoomId).child('chats/' + genKey).set({
+                      genKey: genKey,
+                      from: from,
+                      message: message,
+                      createdAt: firebase.database.ServerValue.TIMESTAMP
+
+                    });
+                }
+                else if(type==='user')
+                {
+                  console.log(userChats);
+                    var genKey = userChats.push().key;
+                    rootRef.child('one-one').child(selectUserRoomKeyId).child('chats/' + genKey).set({
+                        genKey: genKey,
+                        from: from,
+                        message: message,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+
+                    });
+                }
+
+            }
+        },
+        sendImage: function(from, imageUrl,type) {
+          if (from && imageUrl) {
+            if(type==='room') {
                 var genKey = chats.push().key;
                 rootRef.child('rooms').child(selectedRoomId).child('chats/' + genKey).set({
-                    genKey: genKey,
-                    from: from,
-                    message: message,
-                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                  genKey: genKey,
+                  from: from,
+                  photo: imageUrl,
+                  createdAt: firebase.database.ServerValue.TIMESTAMP
 
                 });
             }
-        },
-        sendImage: function(from, imageUrl) {
-          if (from && imageUrl) {
-            var genKey = chats.push().key;
-            rootRef.child('rooms').child(selectedRoomId).child('chats/' + genKey).set({
-              genKey: genKey,
-              from: from,
-              photo: imageUrl,
-              createdAt: firebase.database.ServerValue.TIMESTAMP
+            else if(type==='user'){
+                var genKey = userChats.push().key;
+                rootRef.child('one-one').child(selectUserRoomKeyId).child('chats/' + genKey).set({
+                  genKey: genKey,
+                  from: from,
+                  photo: imageUrl,
+                  createdAt: firebase.database.ServerValue.TIMESTAMP
 
-            });
+                });
+            }
+
           }
         }
     }
@@ -192,23 +262,29 @@ angular.module('starter.services', [])
     }
 })
   .factory('Users',  ['$rootScope','Chats', function($rootScope,Chats) {
+    //$rootScope.allUsers = {};
     return{
+      all:function () {
+        return  rootRef.child('users').once('value');
+      },
       getAllUsers:function () {
-          rootRef.child('users').once('value', function (snap1) {
-          var profileDefaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/testdb-45e50.appspot.com/o/ionic.png?alt=media";
-          for (var userkey in snap1.val()) {                //console.log(snap1.val()[p].myProfileImage);
-            $rootScope.userPorfiles[snap1.val()[userkey].displayName] = snap1.val()[userkey].myProfileImage == null ? profileDefaultImageUrl : snap1.val()[userkey].myProfileImage;
+
+        rootRef.child('users').once('value', function (snap) {
+          for (var userkey in snap.val()) {                //console.log(snap1.val()[p].myProfileImage);
+            $rootScope.userPorfiles[snap.val()[userkey].displayName] = snap.val()[userkey].myProfileImage == null ? profileDefaultImageUrl : snap.val()[userkey].myProfileImage;
+            //$rootScope.allUsers[userkey]=snap.val()[userkey];
+
           }
           console.log($rootScope.userPorfiles)
-
-
-        })
+          //console.log($rootScope.allUsers)
           return $rootScope.userPorfiles;
+        })
+        return $rootScope.userPorfiles;
       },
       getUserProfile:function (displayName) {
           if ($rootScope.userPorfiles[displayName] != null) {
             //console.log( displayName)
-            return;
+              return;
           }
           rootRef.child('users').orderByChild('displayName').equalTo(displayName).once('value', function (snap1) {
             var profileDefaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/testdb-45e50.appspot.com/o/ionic.png?alt=media";
@@ -219,7 +295,7 @@ angular.module('starter.services', [])
 
           })
       },
-      uploadAndSend:function (element,isSend) {
+      uploadAndSend:function (element,isSend,type) {
           //var deferred = $q.defer();
           console.log(element.files[0]);
           var fileName=element.files[0].name;
@@ -257,7 +333,7 @@ angular.module('starter.services', [])
               console.log(uploadTask.snapshot.downloadURL);
               if(isSend)
               {
-                Chats.sendImage(displayNames,profileImageUrl);
+                Chats.sendImage(displayNames,profileImageUrl,type);
               }
             });
 
